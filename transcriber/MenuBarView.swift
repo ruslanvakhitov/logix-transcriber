@@ -162,7 +162,7 @@ struct MenuBarView: View {
                 )
             }
             .keyboardShortcut("r", modifiers: .command)
-            .disabled(!transcriptionManager.isLoaded || !permissionsManager.allPermissionsGranted)
+            .disabled(!transcriptionManager.isLoaded) // Allow force start even if permissions check fails
             
             Divider()
             
