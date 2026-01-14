@@ -5,6 +5,7 @@
 ## Features
 
 - **Hold-to-Dictate**: Hold Right ⌥ Option → speak → release → text is inserted
+- **File Transcription**: Drag & drop audio files (MP3, WAV, M4A, FLAC, OGG) to transcribe
 - **100% Local**: Parakeet TDT v3 model runs on-device (Neural Engine)
 - **Two Modes**:
   - **Streaming**: Words appear in real-time while you speak
@@ -25,10 +26,17 @@
 
 ## Usage
 
+### Voice Dictation
 1. Click 🎤 in the menu bar
 2. Hold the **Right ⌥ Option** key for >1 second
 3. Speak naturally
 4. Release — text appears in the active input field
+
+### File Transcription
+1. Click 🎤 in the menu bar → **Transcribe File...** (⌘O)
+2. Drag & drop audio file or click "Select File..."
+3. Wait for transcription (progress bar shows status)
+4. Copy result to clipboard
 
 ## Tech Stack
 
@@ -37,10 +45,18 @@
 - **AVFoundation** — Audio capture
 - **CoreML + Neural Engine** — Model inference
 
-## Settings
+## Changelog
 
-- **Transcription Mode**: Streaming (real-time) / Full (after release)
-- **Permissions**: Microphone, Accessibility
+### v1.1.0
+- ✨ File transcription with drag & drop
+- 📊 Progress bar with time estimate
+- 🎵 Support for MP3, WAV, M4A, AIFF, FLAC, OGG
+
+### v1.0.0
+- 🎉 Initial release
+- 🎤 Hold-to-dictate with Right Option key
+- ⚡ Streaming and Full transcription modes
+- 📋 Auto-paste to active input field
 
 ## License
 
