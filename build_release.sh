@@ -28,7 +28,10 @@ fi
 echo "📦 Exporting App..."
 # Since we don't have a dev cert, we just copy the app from archive
 # This avoids export errors with ad-hoc signing
-cp -R "build/$APP_NAME.xcarchive/Products/Applications/$APP_NAME.app" "dist/"
+BUILD_APP_NAME="transcriber"
+TARGET_APP_NAME="LogixTranscriber"
+
+cp -R "build/$APP_NAME.xcarchive/Products/Applications/$BUILD_APP_NAME.app" "dist/$TARGET_APP_NAME.app"
 
 if [ $? -ne 0 ]; then
     echo "❌ Export failed"
@@ -37,7 +40,7 @@ fi
 
 echo "💿 Creating DMG..."
 hdiutil create -volname "Logix Transcriber" \
-               -srcfolder "dist/$APP_NAME.app" \
+               -srcfolder "dist/$TARGET_APP_NAME.app" \
                -ov -format UDZO \
                "dist/$DMG_NAME.dmg"
 
