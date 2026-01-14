@@ -162,6 +162,16 @@ struct MenuBarView: View {
             }
             .keyboardShortcut("r", modifiers: .command)
             .disabled(!transcriptionManager.isLoaded || !permissionsManager.allPermissionsGranted)
+            
+            Divider()
+            
+            Button {
+                openWindow(id: "file-transcription")
+                NSApp.activate(ignoringOtherApps: true)
+            } label: {
+                Label("Transcribe File...", systemImage: "doc.text.magnifyingglass")
+            }
+            .keyboardShortcut("o", modifiers: .command)
         }
     }
     

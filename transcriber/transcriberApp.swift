@@ -43,6 +43,13 @@ struct transcriberApp: App {
         }
         .windowResizability(.contentSize)
         .defaultSize(width: 500, height: 400)
+        
+        // File Transcription window
+        Window("Transcribe File", id: "file-transcription") {
+            FileTranscriptionView(transcriptionManager: transcriptionManager)
+        }
+        .windowResizability(.contentSize)
+        .defaultSize(width: 500, height: 400)
     }
     
     private var menuBarIcon: String {
