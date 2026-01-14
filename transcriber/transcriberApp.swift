@@ -29,7 +29,11 @@ struct transcriberApp: App {
             Label {
                 Text("Transcriber")
             } icon: {
-                Image(systemName: menuBarIcon)
+                if appState.state == .idle {
+                    Image("MenuBarIcon")
+                } else {
+                    Image(systemName: menuBarIcon)
+                }
             }
         }
         .menuBarExtraStyle(.window)
@@ -63,7 +67,7 @@ struct transcriberApp: App {
         case .error:
             return "exclamationmark.triangle"
         default:
-            return "mic"
+            return "mic" // Fallback, though we use Image("MenuBarIcon") for idle
         }
     }
 }
