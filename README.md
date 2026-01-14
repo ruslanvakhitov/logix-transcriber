@@ -1,47 +1,47 @@
 # Logix Transcriber
 
-🎤 **macOS Voice-to-Text** - локальная транскрипция речи с Neural Engine
+🎤 **macOS Voice-to-Text** — Local speech transcription powered by Neural Engine
 
-## Возможности
+## Features
 
-- **Hold-to-Dictate**: Зажми правый ⌥ Option → говори → отпусти → текст вставится
-- **100% локально**: Модель Parakeet TDT v3 работает на устройстве (Neural Engine)
-- **Два режима**:
-  - **Streaming**: Слова печатаются в реальном времени пока говоришь
-  - **Full**: Текст вставляется целиком после отпускания
-- **Menu Bar App**: Работает из системного трея, не мешает
+- **Hold-to-Dictate**: Hold Right ⌥ Option → speak → release → text is inserted
+- **100% Local**: Parakeet TDT v3 model runs on-device (Neural Engine)
+- **Two Modes**:
+  - **Streaming**: Words appear in real-time while you speak
+  - **Full**: Text is pasted all at once after you release
+- **Menu Bar App**: Lives in the system tray, stays out of your way
 
-## Требования
+## Requirements
 
 - macOS 14.0+
 - Apple Silicon (M1/M2/M3/M4)
-- ~500MB для моделей (скачиваются автоматически)
+- ~500MB for models (downloaded automatically on first run)
 
-## Установка
+## Installation
 
-1. Открой `transcriber.xcodeproj` в Xcode
+1. Open `transcriber.xcodeproj` in Xcode
 2. Build & Run (⌘R)
-3. Разреши доступ к микрофону и Accessibility
+3. Grant Microphone and Accessibility permissions when prompted
 
-## Использование
+## Usage
 
-1. Кликни на 🎤 в меню баре
-2. Зажми **правый ⌥ Option** на >1 секунды
-3. Говори
-4. Отпусти — текст появится в активном поле ввода
+1. Click 🎤 in the menu bar
+2. Hold the **Right ⌥ Option** key for >1 second
+3. Speak naturally
+4. Release — text appears in the active input field
 
-## Технологии
+## Tech Stack
 
-- **FluidAudio SDK** — Parakeet TDT v3 ASR модели
-- **SwiftUI** — Нативный macOS UI
-- **AVFoundation** — Захват аудио
-- **CoreML + Neural Engine** — Инференс моделей
+- **FluidAudio SDK** — Parakeet TDT v3 ASR models
+- **SwiftUI** — Native macOS UI
+- **AVFoundation** — Audio capture
+- **CoreML + Neural Engine** — Model inference
 
-## Настройки
+## Settings
 
 - **Transcription Mode**: Streaming (real-time) / Full (after release)
 - **Permissions**: Microphone, Accessibility
 
-## Лицензия
+## License
 
 MIT
