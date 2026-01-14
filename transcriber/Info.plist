@@ -8,6 +8,8 @@
     <string>Logix Transcriber</string>
     <key>CFBundleName</key>
     <string>LogixTranscriber</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.logix.transcriber.v2</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>This app needs microphone access to transcribe your voice in real-time using on-device AI.</string>
     <key>NSSpeechRecognitionUsageDescription</key>

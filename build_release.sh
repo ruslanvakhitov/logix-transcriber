@@ -25,22 +25,29 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "📦 Exporting App..."
-# Since we don't have a dev cert, we just copy the app from archive
-# This avoids export errors with ad-hoc signing
+echo "📦 Preparing DMG content..."
+APP_DST="dist/dmg_content"
+rm -rf "$APP_DST"
+mkdir -p "$APP_DST"
+
 BUILD_APP_NAME="transcriber"
 TARGET_APP_NAME="LogixTranscriber"
 
-cp -R "build/$APP_NAME.xcarchive/Products/Applications/$BUILD_APP_NAME.app" "dist/$TARGET_APP_NAME.app"
+# Copy App to DMG content folder
+cp -R "build/$APP_NAME.xcarchive/Products/Applications/$BUILD_APP_NAME.app" "$APP_DST/$TARGET_APP_NAME.app"
+
+# Create Applications symlink
+ln -s /Applications "$APP_DST/Applications"
 
 if [ $? -ne 0 ]; then
-    echo "❌ Export failed"
+    echo "❌ Preparation failed"
     exit 1
 fi
 
 echo "💿 Creating DMG..."
+rm -f "dist/$DMG_NAME.dmg"
 hdiutil create -volname "Logix Transcriber" \
-               -srcfolder "dist/$TARGET_APP_NAME.app" \
+               -srcfolder "$APP_DST" \
                -ov -format UDZO \
                "dist/$DMG_NAME.dmg"
 
