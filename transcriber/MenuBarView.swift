@@ -72,13 +72,14 @@ struct MenuBarView: View {
     // MARK: - Sections
     
     private var headerSection: some View {
-        HStack {
-            Image(systemName: statusIcon)
-                .foregroundColor(statusColor)
-                .font(.title2)
+        HStack(spacing: 12) {
+            Image("AppLogo")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 32, height: 32)
             
             VStack(alignment: .leading) {
-                Text("Transcriber")
+                Text("Logix Transcriber")
                     .font(.headline)
                 Text(appState.statusText)
                     .font(.caption)
