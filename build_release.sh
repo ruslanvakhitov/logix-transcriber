@@ -3,7 +3,7 @@
 # Configuration
 APP_NAME="transcriber"
 SCHEME_NAME="transcriber"
-DMG_NAME="LogixTranscriber_v1.2.0"
+DMG_NAME="LogixTranscriber_v1.2.1"
 
 # Clean build directory
 rm -rf build dist
@@ -16,9 +16,9 @@ xcodebuild -project transcriber.xcodeproj \
            -archivePath "build/$APP_NAME.xcarchive" \
            -configuration Release \
            archive \
-           CODE_SIGN_IDENTITY="" \
-           CODE_SIGNING_REQUIRED=NO \
-           CODE_SIGNING_ALLOWED=NO
+           CODE_SIGN_IDENTITY="-" \
+           CODE_SIGNING_REQUIRED=YES \
+           CODE_SIGNING_ALLOWED=YES
 
 if [ $? -ne 0 ]; then
     echo "❌ Archive failed"
@@ -36,16 +36,18 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "🔓 Removing code signature (fixes TCC permission issues)..."
-# Remove signature from main binary
-codesign --remove-signature "dist/$TARGET_APP_NAME.app/Contents/MacOS/$BUILD_APP_NAME" 2>/dev/null || true
-# Remove signature from app bundle
-codesign --remove-signature "dist/$TARGET_APP_NAME.app" 2>/dev/null || true
-# Remove any extended attributes
+echo "🔐 Re-signing app with fresh ad-hoc signature..."
+# Re-sign all frameworks and binaries inside the app
+find "dist/$TARGET_APP_NAME.app" -name "*.dylib" -o -name "*.framework" | while read f; do
+    codesign --force --deep --sign - "$f" 2>/dev/null || true
+done
+# Re-sign the main app bundle
+codesign --force --deep --sign - "dist/$TARGET_APP_NAME.app"
+
+# Clear extended attributes
 xattr -cr "dist/$TARGET_APP_NAME.app"
 
 echo "💿 Creating DMG with Applications link..."
-# Create temp folder for DMG contents
 mkdir -p "dist/dmg_content"
 cp -R "dist/$TARGET_APP_NAME.app" "dist/dmg_content/"
 ln -s /Applications "dist/dmg_content/Applications"
@@ -55,7 +57,6 @@ hdiutil create -volname "Logix Transcriber" \
                -ov -format UDZO \
                "dist/$DMG_NAME.dmg"
 
-# Cleanup
 rm -rf "dist/dmg_content"
 
 if [ $? -ne 0 ]; then
@@ -66,8 +67,9 @@ fi
 echo "✅ Build Complete!"
 echo "📂 Output: dist/$DMG_NAME.dmg"
 echo ""
-echo "📋 Installation instructions:"
-echo "   1. Open the DMG"
-echo "   2. Drag LogixTranscriber to Applications"
-echo "   3. Run: xattr -cr /Applications/LogixTranscriber.app"
-echo "   4. Open the app and grant permissions"
+echo "📋 Installation:"
+echo "   1. Open DMG, drag to Applications"
+echo "   2. Run: xattr -cr /Applications/LogixTranscriber.app"
+echo "   3. Open app (Right-click → Open first time)"
+echo "   4. Grant permissions, enable 'Bypass' toggle in Settings if needed"
+
