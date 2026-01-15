@@ -87,6 +87,16 @@ struct GeneralSettingsView: View {
                 Button("Refresh Permissions") {
                     permissionsManager.refreshPermissions()
                 }
+                
+                // Bypass toggle for users who have granted permission but detection fails
+                Toggle(isOn: $permissionsManager.bypassAccessibilityCheck) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Bypass Accessibility Check")
+                        Text("Enable if you granted permission but the app doesn't detect it")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
             
             Section("Startup") {

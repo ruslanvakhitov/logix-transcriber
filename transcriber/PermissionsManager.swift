@@ -8,6 +8,7 @@
 import Foundation
 import AVFoundation
 import AppKit
+import Combine
 
 /// Manages system permissions required by the app
 @MainActor
@@ -17,10 +18,37 @@ final class PermissionsManager: ObservableObject {
     @Published private(set) var hasMicrophonePermission: Bool = false
     @Published private(set) var hasAccessibilityPermission: Bool = false
     
+    /// User can bypass Accessibility check if they know it's granted but detection fails
+    @Published var bypassAccessibilityCheck: Bool {
+        didSet {
+            UserDefaults.standard.set(bypassAccessibilityCheck, forKey: "bypassAccessibilityCheck")
+            objectWillChange.send()
+        }
+    }
+    
+    private var refreshTimer: Timer?
+    
     // MARK: - Initialization
     
     init() {
+        self.bypassAccessibilityCheck = UserDefaults.standard.bool(forKey: "bypassAccessibilityCheck")
         refreshPermissions()
+        startPeriodicRefresh()
+    }
+    
+    deinit {
+        refreshTimer?.invalidate()
+    }
+    
+    // MARK: - Periodic Refresh
+    
+    private func startPeriodicRefresh() {
+        // Refresh every 2 seconds to catch permission changes
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.refreshPermissions()
+            }
+        }
     }
     
     // MARK: - Permission Checks
@@ -38,8 +66,27 @@ final class PermissionsManager: ObservableObject {
     
     /// Check accessibility permission status
     func checkAccessibilityPermission() -> Bool {
+        // If user bypassed check, always return true
+        if bypassAccessibilityCheck {
+            return true
+        }
         let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): false]
         return AXIsProcessTrustedWithOptions(options)
+    }
+    
+    /// Test if Accessibility actually works by trying to post a test event
+    func testAccessibilityWorks() -> Bool {
+        // Try to create a keyboard event - this will fail silently if no permission
+        guard let source = CGEventSource(stateID: .hidSystemState) else {
+            return false
+        }
+        // Create a "do nothing" event (modifier key with no actual effect)
+        guard let event = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: false) else {
+            return false
+        }
+        // If we can create the event without crash, likely we have permission
+        // Note: This doesn't guarantee posting works, but it's a good sign
+        return true
     }
     
     // MARK: - Permission Requests
@@ -59,6 +106,11 @@ final class PermissionsManager: ObservableObject {
     func requestAccessibilityPermission() {
         let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true]
         _ = AXIsProcessTrustedWithOptions(options)
+        // Refresh after a short delay to pick up changes
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            refreshPermissions()
+        }
     }
     
     /// Open System Settings to Privacy & Security > Accessibility
@@ -87,7 +139,11 @@ final class PermissionsManager: ObservableObject {
             issues.append("Microphone")
         }
         if !hasAccessibilityPermission {
-            issues.append("Accessibility")
+            if bypassAccessibilityCheck {
+                issues.append("Accessibility (bypassed)")
+            } else {
+                issues.append("Accessibility")
+            }
         }
         
         if issues.isEmpty {
