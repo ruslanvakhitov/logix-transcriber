@@ -15,6 +15,11 @@ struct transcriberApp: App {
     @StateObject private var hotkeyManager = HotkeyManager()
     @StateObject private var permissionsManager = PermissionsManager()
     
+    init() {
+        // Models will be loaded once transcriptionManager is initialized
+        // We need to trigger loading after the StateObjects are created
+    }
+    
     var body: some Scene {
         // Menu bar app
         MenuBarExtra {
@@ -25,6 +30,10 @@ struct transcriberApp: App {
                 hotkeyManager: hotkeyManager,
                 permissionsManager: permissionsManager
             )
+            .task {
+                // Load models at app startup, not when menu opens
+                await loadModelsIfNeeded()
+            }
         } label: {
             Label {
                 Text("Transcriber")
@@ -68,6 +77,21 @@ struct transcriberApp: App {
             return "exclamationmark.triangle"
         default:
             return "mic" // Fallback, though we use Image("MenuBarIcon") for idle
+        }
+    }
+    
+    /// Load models automatically at app startup
+    @MainActor
+    private func loadModelsIfNeeded() async {
+        // Only load if microphone permission is granted and models not already loaded
+        guard permissionsManager.hasMicrophonePermission else { return }
+        guard !transcriptionManager.isLoaded else { return }
+        
+        do {
+            try await transcriptionManager.loadModels()
+            appState.isModelLoaded = true
+        } catch {
+            appState.state = .error(error.localizedDescription)
         }
     }
 }
