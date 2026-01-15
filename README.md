@@ -18,11 +18,34 @@
 - Apple Silicon (M1/M2/M3/M4)
 - ~500MB for models (downloaded automatically on first run)
 
-## Installation
+## Installation (DMG)
 
-1. Open `transcriber.xcodeproj` in Xcode
-2. Build & Run (⌘R)
-3. Grant Microphone and Accessibility permissions when prompted
+1. **Download** `LogixTranscriber_vX.X.X.dmg` from [Releases](https://github.com/ruslanvakhitov/logix-transcriber/releases)
+2. **Open DMG** and drag `LogixTranscriber` to `Applications`
+3. **Remove quarantine** (required for unsigned apps):
+   ```bash
+   xattr -cr /Applications/LogixTranscriber.app
+   ```
+4. **First launch**: Right-click → Open (to bypass Gatekeeper warning)
+
+## Permissions Setup
+
+The app requires two permissions to work:
+
+### Microphone
+- Needed for voice recording
+- macOS will prompt automatically on first use
+- Grant via: **System Settings → Privacy & Security → Microphone**
+
+### Accessibility
+- Needed to paste text into other apps
+- Grant via: **System Settings → Privacy & Security → Accessibility**
+- Add `LogixTranscriber` using the **+** button
+
+> **⚠️ Troubleshooting**: If permissions don't work after granting:
+> 1. Open **Settings** in the app
+> 2. Enable **"Bypass Accessibility Check"** toggle
+> 3. This allows the app to work even if macOS detection fails
 
 ## Usage
 
@@ -38,6 +61,12 @@
 3. Wait for transcription (progress bar shows status)
 4. Copy result to clipboard
 
+## Building from Source
+
+1. Open `transcriber.xcodeproj` in Xcode
+2. Build & Run (⌘R)
+3. Grant permissions when prompted
+
 ## Tech Stack
 
 - **FluidAudio SDK** — Parakeet TDT v3 ASR models
@@ -46,6 +75,12 @@
 - **CoreML + Neural Engine** — Model inference
 
 ## Changelog
+
+### v1.2.2
+- 🚀 Auto-load models at startup
+- 🔓 Bypass toggle for Accessibility permission issues
+- 🔄 Periodic permission refresh
+- ✉️ Improved ad-hoc signing for distribution
 
 ### v1.1.0
 - ✨ File transcription with drag & drop
